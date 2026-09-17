@@ -1,0 +1,103 @@
+.pixel-swap {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  isolation: isolate;
+  outline: none;
+  border-radius: inherit;
+  cursor: pointer;
+}
+
+.pixel-swap__layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.pixel-swap__layer[data-visible='false'] {
+  visibility: hidden;
+}
+
+.pixel-swap__grid {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.pixel-swap__pixel {
+  position: absolute;
+  overflow: hidden;
+  opacity: 0;
+  contain: paint;
+}
+
+.pixel-swap__pixel-content {
+  position: absolute;
+}
+
+/* Custom clause card styles for PixelSwap integration */
+.pixelswap-clause-card {
+  height: 100%;
+  width: 100%;
+  padding: 1.15rem 1.25rem;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-sizing: border-box;
+  text-align: left;
+  user-select: none;
+}
+
+.pixelswap-clause-card.legalese {
+  background: rgba(248, 113, 113, 0.08);
+  border: 1px solid rgba(248, 113, 113, 0.25);
+  color: #e2e8f0;
+}
+
+.pixelswap-clause-card.decoded {
+  background: rgba(52, 211, 153, 0.08);
+  border: 1px solid rgba(52, 211, 153, 0.25);
+  color: #e2e8f0;
+}
+
+.pixelswap-clause-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+
+.pixelswap-clause-badge.badge-red {
+  color: #f87171;
+}
+
+.pixelswap-clause-badge.badge-green {
+  color: #34d399;
+}
+
+.pixelswap-clause-body {
+  font-size: 0.82rem;
+  line-height: 1.65;
+  color: #cbd5e1;
+}
+
+.pixelswap-hint {
+  font-size: 0.68rem;
+  color: var(--gold, #e5b54f);
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  opacity: 0.9;
+}

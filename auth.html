@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign In — Judgeman</title>
+  <meta name="description" content="Sign in or create a free Judgeman account to start analyzing legal documents with AI." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./style.css" />
+  <link rel="stylesheet" href="./style-extra.css" />
+  <link rel="stylesheet" href="./MoltenMetal.css" />
+</head>
+<body>
+
+<!-- MoltenMetal WebGL Background Wallpaper -->
+<div id="molten-bg" class="molten-metal-bg" aria-hidden="true"></div>
+
+<!-- Background -->
+<div class="bg-canvas" aria-hidden="true">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+</div>
+
+<!-- Back to home -->
+<a href="index.html" style="position:fixed;top:1.25rem;left:1.5rem;z-index:100;display:flex;align-items:center;gap:0.4rem;font-size:0.8rem;color:var(--text-muted);text-decoration:none;transition:color var(--trans)" onmouseover="this.style.color='var(--text-primary)'" onmouseout="this.style.color='var(--text-muted)'" aria-label="Back to Judgeman home">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+  Back to Home
+</a>
+
+<div class="auth-page" style="position:relative;z-index:1">
+  <div class="auth-split glass-lg">
+
+    <!-- ══════════════════════════════════════
+         LEFT — BRAND PANEL
+    ══════════════════════════════════════ -->
+    <div class="auth-brand-panel" aria-label="Judgeman brand panel">
+      <!-- Logo -->
+      <div>
+        <a href="index.html" class="nav-brand" aria-label="Judgeman Home">
+          <svg width="34" height="34" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect width="32" height="32" rx="8" fill="url(#lg-auth)"/>
+            <defs><linearGradient id="lg-auth" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse"><stop stop-color="#4f46e5"/><stop offset="1" stop-color="#818cf8"/></linearGradient></defs>
+            <line x1="16" y1="7" x2="16" y2="25" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="10" y1="10" x2="22" y2="10" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M10 10 L7 16 M10 10 L13 16" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
+            <path d="M7 16 Q10 18 13 16" stroke="white" stroke-width="1.3" stroke-linecap="round" fill="none"/>
+            <path d="M22 10 L19 16 M22 10 L25 16" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
+            <path d="M19 16 Q22 18 25 16" stroke="white" stroke-width="1.3" stroke-linecap="round" fill="none"/>
+            <line x1="13" y1="25" x2="19" y2="25" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <span class="brand-name" style="font-size:1.2rem">Judge<span>man</span></span>
+        </a>
+
+        <div class="auth-brand-quote">
+          Legal information should be<br><span>accessible to everyone</span> —<br>not just those who can afford it.
+        </div>
+      </div>
+
+      <!-- Feature checklist -->
+      <ul class="auth-brand-features" aria-label="Platform features">
+        <li>
+          <div class="auth-check" aria-hidden="true">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          Plain-English contract simplification
+        </li>
+        <li>
+          <div class="auth-check" aria-hidden="true">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          AI risk & obligation radar
+        </li>
+        <li>
+          <div class="auth-check" aria-hidden="true">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          Side-by-side contract comparison
+        </li>
+        <li>
+          <div class="auth-check" aria-hidden="true">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          Lawyer consultation prep kit export
+        </li>
+        <li>
+          <div class="auth-check" aria-hidden="true">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          Powered by Google Gemini AI
+        </li>
+      </ul>
+
+      <!-- Disclaimer -->
+      <div style="font-size:0.72rem;color:var(--text-muted);line-height:1.6;border-top:1px solid var(--glass-border);padding-top:1rem">
+        Judgeman provides legal literacy tools, not formal legal advice. Always consult a licensed attorney.
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         RIGHT — FORM PANEL
+    ══════════════════════════════════════ -->
+    <div class="auth-form-panel" id="auth-form-panel">
+
+      <!-- Tab Switcher -->
+      <div class="auth-tab-row" role="tablist" aria-label="Switch between Login and Sign Up">
+        <button class="auth-tab" id="tab-login" role="tab" aria-selected="false" aria-controls="form-login">Log In</button>
+        <button class="auth-tab" id="tab-signup" role="tab" aria-selected="false" aria-controls="form-signup">Sign Up</button>
+      </div>
+
+      <!-- Global error -->
+      <div class="auth-global-error" id="global-error" role="alert" aria-live="polite">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+        <span id="global-error-text"></span>
+      </div>
+
+      <!-- ── LOGIN FORM ── -->
+      <form id="form-login" novalidate role="form" aria-label="Log in to your account" style="display:none">
+        <div class="auth-form-header">
+          <div class="auth-form-title">Welcome back 👋</div>
+          <div class="auth-form-sub">Sign in to your Judgeman account to continue.</div>
+        </div>
+
+        <!-- Email -->
+        <div class="auth-field">
+          <label class="auth-label" for="login-email">Email address</label>
+          <div class="auth-input-wrap">
+            <span class="auth-input-icon" aria-hidden="true">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            </span>
+            <input type="email" id="login-email" class="auth-input" placeholder="you@example.com" autocomplete="email" required aria-describedby="login-email-err" />
+          </div>
+          <div class="auth-error-msg" id="login-email-err" role="alert">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <span>Please enter a valid email address.</span>
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div class="auth-field">
+          <label class="auth-label" for="login-password">Password</label>
+          <div class="auth-input-wrap">
+            <span class="auth-input-icon" aria-hidden="true">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </span>
+            <input type="password" id="login-password" class="auth-input" placeholder="Enter your password" autocomplete="current-password" required aria-describedby="login-pw-err" />
+            <button type="button" class="auth-input-toggle" id="login-pw-toggle" aria-label="Toggle password visibility">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+          <div class="auth-error-msg" id="login-pw-err" role="alert">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <span>Password is required.</span>
+          </div>
+        </div>
+
+        <!-- Remember + Forgot -->
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;font-size:0.78rem">
+          <label style="display:flex;align-items:center;gap:0.5rem;color:var(--text-secondary);cursor:pointer">
+            <input type="checkbox" id="remember-me" style="accent-color:var(--violet)" /> Remember me
+          </label>
+          <a href="#" style="color:var(--violet);text-decoration:underline" tabindex="0">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="auth-submit" id="login-btn">
+          <span id="login-btn-text">Sign In</span>
+          <span id="login-spinner" style="display:none"><span class="loader-ring"></span></span>
+        </button>
+
+        <div class="auth-divider">or continue with</div>
+
+        <button type="button" class="auth-google-btn" id="login-google-btn" aria-label="Sign in with Google (placeholder)">
+          <!-- Google SVG logo -->
+          <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+          </svg>
+          Continue with Google
+        </button>
+
+        <div class="auth-switch-link">
+          Don't have an account? <a id="switch-to-signup">Sign up free</a>
+        </div>
+      </form>
+
+      <!-- ── SIGN UP FORM ── -->
+      <form id="form-signup" novalidate role="form" aria-label="Create a new Judgeman account" style="display:none">
+        <div class="auth-form-header">
+          <div class="auth-form-title">Create your account</div>
+          <div class="auth-form-sub">Start analyzing legal documents for free — no credit card needed.</div>
+        </div>
+
+        <!-- Full Name -->
+        <div class="auth-field">
+          <label class="auth-label" for="signup-name">Full name</label>
+          <div class="auth-input-wrap">
+            <span class="auth-input-icon" aria-hidden="true">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </span>
+            <input type="text" id="signup-name" class="auth-input" placeholder="Your full name" autocomplete="name" required aria-describedby="signup-name-err" />
+          </div>
+          <div class="auth-error-msg" id="signup-name-err" role="alert">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <span>Please enter your full name.</span>
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div class="auth-field">
+          <label class="auth-label" for="signup-email">Email address</label>
+          <div class="auth-input-wrap">
+            <span class="auth-input-icon" aria-hidden="true">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            </span>
+            <input type="email" id="signup-email" class="auth-input" placeholder="you@example.com" autocomplete="email" required aria-describedby="signup-email-err" />
+          </div>
+          <div class="auth-error-msg" id="signup-email-err" role="alert">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <span id="signup-email-err-text">Please enter a valid email address.</span>
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div class="auth-field">
+          <label class="auth-label" for="signup-password">Password</label>
+          <div class="auth-input-wrap">
+            <span class="auth-input-icon" aria-hidden="true">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </span>
+            <input type="password" id="signup-password" class="auth-input" placeholder="Create a strong password" autocomplete="new-password" required aria-describedby="signup-pw-err signup-pw-strength" />
+            <button type="button" class="auth-input-toggle" id="signup-pw-toggle" aria-label="Toggle password visibility">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+          <div class="pw-strength" id="signup-pw-strength" aria-live="polite">
+            <div class="pw-strength-bar"><div class="pw-strength-fill" id="pw-fill"></div></div>
+            <div class="pw-strength-label" id="pw-label">Enter a password</div>
+          </div>
+          <div class="auth-error-msg" id="signup-pw-err" role="alert">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <span>Password must be at least 6 characters.</span>
+          </div>
+        </div>
+
+        <!-- Confirm Password -->
+        <div class="auth-field">
+          <label class="auth-label" for="signup-confirm">Confirm password</label>
+          <div class="auth-input-wrap">
+            <span class="auth-input-icon" aria-hidden="true">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            </span>
+            <input type="password" id="signup-confirm" class="auth-input" placeholder="Repeat your password" autocomplete="new-password" required aria-describedby="signup-confirm-err" />
+          </div>
+          <div class="auth-error-msg" id="signup-confirm-err" role="alert">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <span>Passwords do not match.</span>
+          </div>
+        </div>
+
+        <!-- Terms checkbox -->
+        <div class="auth-checkbox-row">
+          <input type="checkbox" id="terms-check" required aria-required="true" />
+          <label for="terms-check">I agree to the <a href="#" tabindex="0">Terms of Service</a> and acknowledge that Judgeman provides legal literacy tools, not formal legal advice.</label>
+        </div>
+
+        <button type="submit" class="auth-submit" id="signup-btn">
+          <span id="signup-btn-text">Create Account</span>
+          <span id="signup-spinner" style="display:none"><span class="loader-ring"></span></span>
+        </button>
+
+        <div class="auth-divider">or continue with</div>
+
+        <button type="button" class="auth-google-btn" id="signup-google-btn" aria-label="Sign up with Google (placeholder)">
+          <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+          </svg>
+          Continue with Google
+        </button>
+
+        <div class="auth-switch-link">
+          Already have an account? <a id="switch-to-login">Sign in</a>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { signUp, login, signInWithGoogle, validateEmail, getPasswordStrength } from './js/auth.js';
+
+/* ── Read URL params ───────────────────────── */
+const params = new URLSearchParams(window.location.search);
+const mode = params.get('mode') || 'login';
+const prefillEmail = params.get('email') || '';
+
+/* ── Tab switching ─────────────────────────── */
+const tabLogin  = document.getElementById('tab-login');
+const tabSignup = document.getElementById('tab-signup');
+const formLogin  = document.getElementById('form-login');
+const formSignup = document.getElementById('form-signup');
+
+function showLogin() {
+  tabLogin.classList.add('active');   tabLogin.setAttribute('aria-selected','true');
+  tabSignup.classList.remove('active'); tabSignup.setAttribute('aria-selected','false');
+  formLogin.style.display  = 'block';
+  formSignup.style.display = 'none';
+  clearErrors();
+}
+function showSignup() {
+  tabSignup.classList.add('active');  tabSignup.setAttribute('aria-selected','true');
+  tabLogin.classList.remove('active'); tabLogin.setAttribute('aria-selected','false');
+  formSignup.style.display = 'block';
+  formLogin.style.display  = 'none';
+  clearErrors();
+}
+tabLogin.addEventListener('click', showLogin);
+tabSignup.addEventListener('click', showSignup);
+document.getElementById('switch-to-signup').addEventListener('click', () => showSignup());
+document.getElementById('switch-to-login').addEventListener('click', () => showLogin());
+
+// Init mode from URL
+if (mode === 'signup') showSignup(); else showLogin();
+
+// Prefill email
+if (prefillEmail) {
+  document.getElementById('signup-email').value = prefillEmail;
+  document.getElementById('login-email').value = prefillEmail;
+}
+
+/* ── Clear errors ──────────────────────────── */
+function clearErrors() {
+  document.querySelectorAll('.auth-error-msg').forEach(e => e.classList.remove('visible'));
+  document.querySelectorAll('.auth-input').forEach(e => { e.classList.remove('error-state','success-state'); });
+  const ge = document.getElementById('global-error');
+  ge.classList.remove('visible');
+}
+function showError(inputId, errId, msg) {
+  const inp = document.getElementById(inputId);
+  const err = document.getElementById(errId);
+  if (inp) inp.classList.add('error-state');
+  if (err) { err.classList.add('visible'); if (msg) { const span = err.querySelector('span'); if (span) span.textContent = msg; } }
+}
+function setGlobalError(msg) {
+  const ge = document.getElementById('global-error');
+  document.getElementById('global-error-text').textContent = msg;
+  ge.classList.add('visible');
+}
+function setFieldSuccess(inputId) {
+  const inp = document.getElementById(inputId);
+  if (inp) { inp.classList.remove('error-state'); inp.classList.add('success-state'); }
+}
+
+/* ── Password toggle ────────────────────────── */
+function bindPwToggle(toggleId, inputId) {
+  document.getElementById(toggleId).addEventListener('click', () => {
+    const inp = document.getElementById(inputId);
+    inp.type = inp.type === 'password' ? 'text' : 'password';
+  });
+}
+bindPwToggle('login-pw-toggle', 'login-password');
+bindPwToggle('signup-pw-toggle', 'signup-password');
+
+/* ── Password strength ──────────────────────── */
+document.getElementById('signup-password').addEventListener('input', function() {
+  const s = getPasswordStrength(this.value);
+  document.getElementById('pw-fill').style.width = s.width;
+  document.getElementById('pw-fill').style.background = s.color;
+  document.getElementById('pw-label').textContent = 'Strength: ' + s.label;
+  document.getElementById('pw-label').style.color = s.color;
+});
+
+/* ── Spinner helpers ────────────────────────── */
+function setLoading(btnId, textId, spinnerId, loading) {
+  document.getElementById(btnId).disabled = loading;
+  document.getElementById(textId).style.display = loading ? 'none' : 'inline';
+  document.getElementById(spinnerId).style.display = loading ? 'inline' : 'none';
+}
+
+/* ── LOGIN form submit ──────────────────────── */
+formLogin.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  clearErrors();
+  const email = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value;
+  let valid = true;
+
+  if (!validateEmail(email)) { showError('login-email','login-email-err'); valid = false; }
+  if (!password) { showError('login-password','login-pw-err','Password is required.'); valid = false; }
+  if (!valid) return;
+
+  setLoading('login-btn','login-btn-text','login-spinner', true);
+
+  const result = await login({ email, password });
+  setLoading('login-btn','login-btn-text','login-spinner', false);
+
+  if (result.ok) {
+    setFieldSuccess('login-email');
+    setFieldSuccess('login-password');
+    // Success flash then redirect
+    document.getElementById('login-btn').style.background = 'linear-gradient(135deg,#059669,#34d399)';
+    document.getElementById('login-btn-text').textContent = '✓ Signed In!';
+    document.getElementById('login-btn-text').style.display = 'inline';
+    setTimeout(() => { window.location.href = 'app.html'; }, 700);
+  } else {
+    setGlobalError(result.error || 'Invalid email or password.');
+  }
+});
+
+/* ── SIGN UP form submit ────────────────────── */
+formSignup.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  clearErrors();
+  const name     = document.getElementById('signup-name').value.trim();
+  const email    = document.getElementById('signup-email').value.trim();
+  const password = document.getElementById('signup-password').value;
+  const confirm  = document.getElementById('signup-confirm').value;
+  const terms    = document.getElementById('terms-check').checked;
+  let valid = true;
+
+  if (!name)                { showError('signup-name','signup-name-err','Please enter your full name.'); valid = false; }
+  if (!validateEmail(email)){ showError('signup-email','signup-email-err','Please enter a valid email address.'); valid = false; }
+  if (password.length < 6) { showError('signup-password','signup-pw-err','Password must be at least 6 characters.'); valid = false; }
+  if (password !== confirm) { showError('signup-confirm','signup-confirm-err','Passwords do not match.'); valid = false; }
+  if (!terms)               { setGlobalError('Please accept the Terms of Service to continue.'); valid = false; }
+  if (!valid) return;
+
+  setLoading('signup-btn','signup-btn-text','signup-spinner', true);
+
+  const result = await signUp({ name, email, password });
+  setLoading('signup-btn','signup-btn-text','signup-spinner', false);
+
+  if (result.ok) {
+    document.getElementById('signup-btn').style.background = 'linear-gradient(135deg,#059669,#34d399)';
+    document.getElementById('signup-btn-text').textContent = '✓ Account Created!';
+    document.getElementById('signup-btn-text').style.display = 'inline';
+    setTimeout(() => { window.location.href = 'app.html'; }, 700);
+  } else {
+    const emailInput = document.getElementById('signup-email');
+    emailInput.classList.add('error-state');
+    document.getElementById('signup-email-err-text').textContent = result.error || 'Failed to create account.';
+    document.getElementById('signup-email-err').classList.add('visible');
+  }
+});
+
+/* ── Google Sign-In (Firebase) ──────────────── */
+['login-google-btn','signup-google-btn'].forEach(id => {
+  const btn = document.getElementById(id);
+  if (!btn) return;
+  btn.addEventListener('click', async () => {
+    clearErrors();
+    const origHtml = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = `<span style="display:inline-block;animation:spin 0.8s linear infinite;margin-right:6px;">↻</span> Connecting to Google...`;
+    try {
+      const res = await signInWithGoogle();
+      if (res.ok) {
+        btn.innerHTML = `✓ Authenticated!`;
+        setTimeout(() => { window.location.href = 'app.html'; }, 500);
+      } else {
+        btn.disabled = false;
+        btn.innerHTML = origHtml;
+        setGlobalError(res.error || 'Google Sign-In was cancelled or failed.');
+      }
+    } catch (err) {
+      btn.disabled = false;
+      btn.innerHTML = origHtml;
+      setGlobalError(err.message || 'Google Sign-In error.');
+    }
+  });
+});
+
+// Initialize MoltenMetal animated background wallpaper
+import MoltenMetal from './js/MoltenMetal.js';
+new MoltenMetal('#molten-bg', {
+  color1: '#1b1432',
+  color2: '#E5B54F',
+  color3: '#FFF3CF',
+  speed: 0.22,
+  scale: 3.5,
+  detail: 3,
+  glow: 1.5,
+  coreSize: 0.08,
+  swirl: 0.85,
+  fold: -0.18,
+  blackPoint: 0.06,
+  brightness: 1.15,
+  colorMode: 'molten',
+  grain: true,
+  grainIntensity: 0.04,
+  mouseInteraction: true,
+  mouseStrength: 0.25,
+  opacity: 0.55
+});
+</script>
+</body>
+</html>

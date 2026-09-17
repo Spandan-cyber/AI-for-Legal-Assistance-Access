@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Workspace — Judgeman</title>
+  <meta name="description"
+    content="Analyze your legal documents with Judgeman AI — plain language, risk radar, contract comparison, and more." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="./style.css" />
+  <link rel="stylesheet" href="./style-extra.css" />
+  <link rel="stylesheet" href="./TextType.css" />
+  <link rel="stylesheet" href="./GlareHover.css" />
+  <link rel="stylesheet" href="./ClickSpark.css" />
+  <link rel="stylesheet" href="./StarBorder.css" />
+  <link rel="stylesheet" href="./BorderGlow.css" />
+  <link rel="stylesheet" href="./MoltenMetal.css" />
+
+  <!-- Auth guard — runs before body renders -->
+  <script type="module">
+    import { requireAuth } from './js/auth.js';
+    requireAuth('auth.html?mode=login');
+  </script>
+</head>
+
+<body>
+
+  <!-- MoltenMetal WebGL Background Wallpaper -->
+  <div id="molten-bg" class="molten-metal-bg" aria-hidden="true"></div>
+
+  <div class="bg-canvas" aria-hidden="true">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <div class="app-wrapper">
+
+    <!-- ─── Disclaimer Banner ──────────────────── -->
+    <div class="disclaimer-banner" role="note">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+        <line x1="12" y1="9" x2="12" y2="13" />
+        <line x1="12" y1="17" x2="12.01" y2="17" />
+      </svg>
+      <strong>Judgeman</strong> provides legal literacy &amp; document analysis — not formal legal advice. Always
+      consult a licensed attorney.
+    </div>
+
+    <!-- ─── Navigation ─────────────────────────── -->
+    <nav class="nav" role="navigation" aria-label="Application navigation">
+      <div class="nav-inner">
+        <a href="index.html" class="nav-brand" aria-label="Judgeman — Back to Home">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true">
+            <rect width="32" height="32" rx="8" fill="url(#brand-app)" />
+            <defs>
+              <linearGradient id="brand-app" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#4f46e5" />
+                <stop offset="1" stop-color="#818cf8" />
+              </linearGradient>
+            </defs>
+            <line x1="16" y1="7" x2="16" y2="25" stroke="white" stroke-width="1.5" stroke-linecap="round" />
+            <line x1="10" y1="10" x2="22" y2="10" stroke="white" stroke-width="1.5" stroke-linecap="round" />
+            <path d="M10 10 L7 16 M10 10 L13 16" stroke="white" stroke-width="1.3" stroke-linecap="round" />
+            <path d="M7 16 Q10 18 13 16" stroke="white" stroke-width="1.3" stroke-linecap="round" fill="none" />
+            <path d="M22 10 L19 16 M22 10 L25 16" stroke="white" stroke-width="1.3" stroke-linecap="round" />
+            <path d="M19 16 Q22 18 25 16" stroke="white" stroke-width="1.3" stroke-linecap="round" fill="none" />
+            <line x1="13" y1="25" x2="19" y2="25" stroke="white" stroke-width="1.5" stroke-linecap="round" />
+          </svg>
+          <span class="brand-name">Judge<span>man</span></span>
+        </a>
+
+        <!-- App pill nav -->
+        <ul class="nav-pills" role="list">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="#workspace">Workspace</a></li>
+        </ul>
+
+        <div class="nav-actions">
+          <!-- Cloud AI & Firestore status indicator -->
+          <button class="btn-icon" id="open-modal-btn" aria-label="Judgeman Cloud AI &amp; Firestore Status"
+            title="Judgeman Cloud AI &amp; Firestore Active" style="position:relative">
+            <span style="position:absolute;top:6px;right:6px;width:7px;height:7px;border-radius:50%;background:#34d399;box-shadow:0 0 6px #34d399"></span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"
+              stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path
+                d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0 3 3L22 7l-3-3m-3.5 3.5L19 4" />
+            </svg>
+          </button>
+
+          <!-- User avatar display -->
+          <div id="user-menu" style="display:flex;align-items:center;gap:0.6rem;position:relative">
+            <div id="user-avatar"
+              style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#4f46e5,#818cf8);display:flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-size:0.75rem;font-weight:700;color:#fff;cursor:pointer;border:2px solid rgba(129,140,248,0.3);transition:border-color var(--trans)"
+              title="User menu" tabindex="0" role="button" aria-haspopup="true" aria-expanded="false"
+              aria-label="User menu">
+              ??
+            </div>
+            <div id="user-dropdown"
+              style="position:absolute;right:0;top:calc(100% + 0.5rem);min-width:200px;background:rgba(13,18,37,0.97);border:1px solid var(--glass-border);border-radius:var(--radius-lg);padding:0.75rem;backdrop-filter:blur(20px);display:none;z-index:50;box-shadow:0 20px 40px rgba(0,0,0,0.4)">
+              <div id="user-name-display"
+                style="font-family:var(--font-heading);font-size:0.88rem;font-weight:700;margin-bottom:0.1rem"></div>
+              <div id="user-email-display"
+                style="font-size:0.73rem;color:var(--text-muted);margin-bottom:0.75rem;border-bottom:1px solid var(--glass-border);padding-bottom:0.75rem">
+              </div>
+              <button id="logout-btn"
+                style="width:100%;display:flex;align-items:center;gap:0.5rem;background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.2);border-radius:var(--radius-md);padding:0.5rem 0.75rem;color:var(--red);font-size:0.8rem;font-weight:500;cursor:pointer;transition:all var(--trans)"
+                aria-label="Log out">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                  <polyline points="16 17 21 12 16 7" />
+                  <line x1="21" y1="12" x2="9" y2="12" />
+                </svg>
+                Log Out
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- ─── Hero / Upload ──────────────────────── -->
+    <section class="hero" id="features" aria-label="Document Upload">
+      <div class="hero-text">
+        <div class="hero-badge">
+          <span class="dot" aria-hidden="true"></span>
+          AI-Powered Workspace
+        </div>
+        <h1 class="hero-title">
+          Analyze Your<br>
+          <span id="typed-contract-target" class="accent">Legal Documents</span><br>
+          <span class="accent-cyan">Instantly.</span>
+        </h1>
+        <p class="hero-subtitle">
+          Upload any legal document or pick from our sample contracts. Judgeman decodes every clause, spots risks, and
+          prepares your lawyer consultation kit.
+        </p>
+        <div class="hero-cta">
+          <button class="btn-cta primary" id="app-start-cta"
+            onclick="document.getElementById('workspace').scrollIntoView({behavior:'smooth'})"
+            aria-label="Start analyzing your document">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+              stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="5" y1="12" x2="19" y2="12" />
+              <polyline points="12 5 19 12 12 19" />
+            </svg>
+            Start Analyzing
+          </button>
+          <button class="btn-cta secondary" onclick="document.querySelector('[data-sample=nda]').click()"
+            aria-label="View a sample contract">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"
+              stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+            View Sample
+          </button>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:0.6rem;margin-top:2rem">
+          <div class="tag info"
+            style="font-size:0.75rem;padding:0.3rem 0.8rem;display:flex;align-items:center;gap:0.4rem"><svg width="12"
+              height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" aria-hidden="true">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+              <polyline points="22 4 12 14.01 9 11.01" />
+            </svg>Plain-Language Simplifier</div>
+          <div class="tag info"
+            style="font-size:0.75rem;padding:0.3rem 0.8rem;display:flex;align-items:center;gap:0.4rem"><svg width="12"
+              height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" aria-hidden="true">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+              <polyline points="22 4 12 14.01 9 11.01" />
+            </svg>Risk Radar</div>
+          <div class="tag info"
+            style="font-size:0.75rem;padding:0.3rem 0.8rem;display:flex;align-items:center;gap:0.4rem"><svg width="12"
+              height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" aria-hidden="true">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+              <polyline points="22 4 12 14.01 9 11.01" />
+            </svg>AI Chat</div>
+          <div class="tag info"
+            style="font-size:0.75rem;padding:0.3rem 0.8rem;display:flex;align-items:center;gap:0.4rem"><svg width="12"
+              height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" aria-hidden="true">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+              <polyline points="22 4 12 14.01 9 11.01" />
+            </svg>Prep Kit Export</div>
+        </div>
+      </div>
+
+      <!-- Upload Panel -->
+      <div class="upload-panel">
+        <div
+          style="font-family:var(--font-heading);font-size:0.78rem;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-muted);margin-bottom:0.75rem">
+          Quick Load — Sample Contracts</div>
+        <div class="sample-grid" role="group" aria-label="Sample contracts">
+          <button class="sample-chip active" data-sample="lease" aria-label="Load Residential Lease Agreement">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"
+              stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+              <polyline points="9 22 9 12 15 12 15 22" />
+            </svg>
+            Residential Lease
+          </button>
+          <button class="sample-chip" data-sample="nda" aria-label="Load Freelance MSA">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"
+              stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="2" y="7" width="20" height="14" rx="2" />
+              <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+            </svg>
+            Freelance MSA
+          </button>
+          <button class="sample-chip" data-sample="employment" aria-label="Load Employment Offer">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"
+              stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
+            Employment Offer
+          </button>
+          <button class="sample-chip" data-sample="saas" aria-label="Load SaaS Terms">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"
+              stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z" />
+            </svg>
+            SaaS Terms
+          </button>
+        </div>
+        <div class="or-divider">or upload your own</div>
+        <div class="dropzone" id="dropzone" role="button" tabindex="0"
+          aria-label="Drag and drop a legal document or click to browse">
+          <div class="dz-icon" aria-hidden="true">
+            <svg width="40" height="40" viewBox="0 0 32 32" fill="none" stroke="rgba(129,140,248,0.7)"
+              stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M28 20v4a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4v-4" />
+              <polyline points="22 10 16 4 10 10" />
+              <line x1="16" y1="4" x2="16" y2="20" />
+            </svg>
+          </div>
+          <div class="dz-title">Drop your legal document here</div>
+          <div class="dz-sub">Supports .txt files — PDF paste coming soon</div>
+          <input type="file" id="file-input" accept=".txt" style="display:none" aria-hidden="true" />
+        </div>
+        <div
+          style="display:flex;align-items:center;justify-content:center;gap:0.5rem;margin-top:0.75rem;font-size:0.75rem;color:var(--text-muted)">
+          <span style="width:7px;height:7px;border-radius:50%;background:#34d399;box-shadow:0 0 8px #34d399;display:inline-block"
+            aria-hidden="true"></span>
+          <span><strong style="color:#34d399">Cloud AI &amp; Firestore Active:</strong> Automated real-time analysis (no user key needed)</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── Stats Strip ─────────────────────────── -->
+    <div class="stats-strip" role="region" aria-label="Document statistics">
+      <div class="glass stat-card">
+        <div class="stat-icon" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"
+            stroke="rgba(229,181,79,0.8)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+            <line x1="16" y1="13" x2="8" y2="13" />
+            <line x1="16" y1="17" x2="8" y2="17" />
+          </svg></div>
+        <div>
+          <div class="stat-label">Word Count</div>
+          <div class="stat-value gold" id="stat-words">—</div>
+        </div>
+      </div>
+      <div class="glass stat-card">
+        <div class="stat-icon" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"
+            stroke="rgba(56,189,248,0.8)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <polyline points="12 6 12 12 16 14" />
+          </svg></div>
+        <div>
+          <div class="stat-label">Reading Time</div>
+          <div class="stat-value cyan" id="stat-time">—</div>
+        </div>
+      </div>
+      <div class="glass stat-card">
+        <div class="stat-icon" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"
+            stroke="rgba(129,140,248,0.8)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+          </svg></div>
+        <div>
+          <div class="stat-label">Reading Grade</div>
+          <div class="stat-value violet" id="stat-grade">—</div>
+        </div>
+      </div>
+      <div class="glass stat-card">
+        <div class="stat-icon" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"
+            stroke="rgba(248,113,113,0.8)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+            <line x1="12" y1="9" x2="12" y2="13" />
+            <line x1="12" y1="17" x2="12.01" y2="17" />
+          </svg></div>
+        <div>
+          <div class="stat-label">High Risks Found</div>
+          <div class="stat-value" style="color:var(--red)" id="stat-risks">—</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── AI Contract Sentinel Spotlight (React Bits <BorderGlow />) ─── -->
+    <div style="max-width:1400px; margin: 0 auto 2rem; padding: 0 clamp(1rem,5vw,3rem);">
+      <div id="ai-border-glow-card" class="border-glow-card" style="padding: 1px;">
+        <span class="edge-light"></span>
+        <div class="border-glow-inner" style="padding: 1.5rem 2rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.5rem;">
+          <div style="display: flex; align-items: center; gap: 1.25rem;">
+            <div style="width: 48px; height: 48px; border-radius: 14px; background: rgba(229,181,79,0.15); border: 1px solid rgba(229,181,79,0.3); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#E5B54F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+              </svg>
+            </div>
+            <div>
+              <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.25rem;flex-wrap:wrap">
+                <span style="font-family:var(--font-heading);font-weight:700;font-size:1.1rem;color:#F0F4FF;">Autonomous Clause Guard &amp; Risk Sentinel</span>
+                <span class="tag info" style="font-size:0.68rem;padding:0.15rem 0.55rem;">ACTIVE MONITOR</span>
+              </div>
+              <div style="font-size:0.83rem;color:var(--text-secondary);max-width:680px;line-height:1.6;">
+                Gemini AI continuously monitors contract obligations, non-competes, and indemnification caps. Hover near the card edges to reveal the reactive directional boundary glow.
+              </div>
+            </div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <button class="btn-cta secondary" onclick="document.querySelector('[data-panel=panel-risk]').click()" aria-label="Open Risk Radar tab" style="font-size:0.82rem;padding:0.55rem 1.25rem;">
+              Explore Risk Radar →
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── My Uploaded Contracts (Firestore Cloud Library) ─── -->
+    <section class="user-library-section" id="user-library-section" aria-label="My Uploaded Contracts" style="max-width:1400px;margin:0 auto 2rem;padding:0 clamp(1rem,5vw,3rem);">
+      <div class="glass" style="padding:1.5rem 1.75rem;border-radius:var(--radius-xl);border-color:rgba(129,140,248,0.25);">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:1.25rem;">
+          <div style="display:flex;align-items:center;gap:0.75rem;">
+            <div style="width:38px;height:38px;border-radius:10px;background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.3);display:flex;align-items:center;justify-content:center;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--violet)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+              </svg>
+            </div>
+            <div>
+              <div style="font-family:var(--font-heading);font-weight:700;font-size:1.05rem;display:flex;align-items:center;gap:0.6rem;">
+                <span>My Uploaded Contracts</span>
+                <span id="firestore-sync-badge" class="tag info" style="font-size:0.68rem;padding:0.15rem 0.6rem;">
+                  <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#34d399;margin-right:4px;"></span>
+                  Firestore Live Sync
+                </span>
+              </div>
+              <div style="font-size:0.78rem;color:var(--text-secondary);margin-top:0.15rem;">
+                Real-time cloud database of your processed legal agreements &amp; AI risk profiles
+              </div>
+            </div>
+          </div>
+          <button id="quick-upload-trigger" class="btn-cta secondary" style="font-size:0.8rem;padding:0.45rem 1rem;display:flex;align-items:center;gap:0.4rem;" onclick="document.getElementById('file-input').click()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+            Upload New Contract (.txt)
+          </button>
+        </div>
+
+        <div id="user-contracts-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem;">
+          <!-- Populated in real-time from Firestore or local fallback -->
+          <div style="grid-column:1/-1;padding:1.5rem;text-align:center;color:var(--text-muted);font-size:0.82rem;background:rgba(255,255,255,0.02);border-radius:var(--radius-lg);border:1px dashed var(--glass-border);">
+            No custom files uploaded yet. Drag &amp; drop a contract above or load a sample to populate your workspace.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── Main Workspace ──────────────────────── -->
+    <section class="workspace" id="workspace" aria-label="Legal Analysis Workspace">
+      <div class="tab-bar" role="tablist" aria-label="Analysis modules">
+        <button class="tab-btn active" data-panel="panel-overview" role="tab" aria-selected="true">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="3" width="7" height="7" />
+            <rect x="14" y="3" width="7" height="7" />
+            <rect x="14" y="14" width="7" height="7" />
+            <rect x="3" y="14" width="7" height="7" />
+          </svg>
+          Overview
+        </button>
+        <button class="tab-btn" data-panel="panel-simplifier" role="tab" aria-selected="false">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z" />
+            <line x1="16" y1="8" x2="2" y2="22" />
+            <line x1="17.5" y1="15" x2="9" y2="15" />
+          </svg>
+          Plain Language
+        </button>
+        <button class="tab-btn" data-panel="panel-compare" role="tab" aria-selected="false">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="2" y="3" width="8" height="18" rx="2" />
+            <rect x="14" y="3" width="8" height="18" rx="2" />
+          </svg>
+          Compare
+        </button>
+        <button class="tab-btn" data-panel="panel-risk" role="tab" aria-selected="false">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+          </svg>
+          Risk Radar
+        </button>
+        <button class="tab-btn" data-panel="panel-chat" role="tab" aria-selected="false">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+          </svg>
+          Ask Judgeman
+        </button>
+        <button class="tab-btn" data-panel="panel-prep" role="tab" aria-selected="false">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+            <rect x="8" y="2" width="8" height="4" rx="1" />
+          </svg>
+          Prep Kit
+        </button>
+      </div>
+
+      <div class="module-panel active" id="panel-overview" role="tabpanel">
+        <div class="module-header">
+          <div class="module-icon-wrap mi-cyan"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+              stroke="var(--cyan)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"
+              aria-hidden="true">
+              <rect x="3" y="3" width="7" height="7" />
+              <rect x="14" y="3" width="7" height="7" />
+              <rect x="14" y="14" width="7" height="7" />
+              <rect x="3" y="14" width="7" height="7" />
+            </svg></div>
+          <div>
+            <div class="module-title">Document Overview</div>
+            <div class="module-desc">Health snapshot, readability score, and risk distribution at a glance</div>
+          </div>
+        </div>
+        <div id="overview-content"></div>
+      </div>
+
+      <div class="module-panel" id="panel-simplifier" role="tabpanel">
+        <div class="module-header">
+          <div class="module-icon-wrap mi-green"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+              stroke="var(--green)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"
+              aria-hidden="true">
+              <path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z" />
+              <line x1="16" y1="8" x2="2" y2="22" />
+              <line x1="17.5" y1="15" x2="9" y2="15" />
+            </svg></div>
+          <div>
+            <div class="module-title">Plain-Language Simplifier</div>
+            <div class="module-desc">Every complex clause decoded side-by-side — original legalese vs. plain English
+            </div>
+          </div>
+        </div>
+        <div id="simplifier-content"></div>
+      </div>
+
+      <div class="module-panel" id="panel-compare" role="tabpanel">
+        <div class="module-header">
+          <div class="module-icon-wrap mi-violet"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+              stroke="var(--violet)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"
+              aria-hidden="true">
+              <rect x="2" y="3" width="8" height="18" rx="2" />
+              <rect x="14" y="3" width="8" height="18" rx="2" />
+            </svg></div>
+          <div>
+            <div class="module-title">Side-by-Side Contract Comparison</div>
+            <div class="module-desc">Clause-by-clause diff showing exactly what changed between contract versions</div>
+          </div>
+        </div>
+        <div id="comparison-content"></div>
+      </div>
+
+      <div class="module-panel" id="panel-risk" role="tabpanel">
+        <div class="module-header">
+          <div class="module-icon-wrap mi-red"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+              stroke="var(--red)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+              <path d="M9 12l2 2 4-4" />
+            </svg></div>
+          <div>
+            <div class="module-title">Obligation & Risk Radar</div>
+            <div class="module-desc">Every clause rated by risk level — filter by category to spot what matters most
+            </div>
+          </div>
+        </div>
+        <div class="filter-pills" id="risk-filters" role="group" aria-label="Filter risk level">
+          <button class="filter-pill active" data-filter="all">All Clauses</button>
+          <button class="filter-pill" data-filter="high">🔴 High Risk</button>
+          <button class="filter-pill" data-filter="medium">🟡 Caution</button>
+          <button class="filter-pill" data-filter="low">🟢 Standard</button>
+        </div>
+        <div id="risk-content"></div>
+      </div>
+
+      <div class="module-panel" id="panel-chat" role="tabpanel">
+        <div class="module-header">
+          <div class="module-icon-wrap mi-gold"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+              stroke="var(--gold)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"
+              aria-hidden="true">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+              <path d="M8 10h.01M12 10h.01M16 10h.01" />
+            </svg></div>
+          <div>
+            <div class="module-title">Ask Judgeman</div>
+            <div class="module-desc">Chat with your document — ask anything about clauses, rights, or risks</div>
+          </div>
+        </div>
+        <div class="glass-lg chat-wrap" role="log" aria-live="polite">
+          <div class="chat-messages" id="chat-messages"></div>
+          <div class="suggested-chips" id="suggested-chips" role="group" aria-label="Suggested questions">
+            <button class="sug-chip">What are the biggest risks?</button>
+            <button class="sug-chip">Can they terminate me without cause?</button>
+            <button class="sug-chip">Who owns the IP?</button>
+            <button class="sug-chip">Is there a non-compete clause?</button>
+            <button class="sug-chip">What are the payment terms?</button>
+          </div>
+          <div class="chat-footer">
+            <input type="text" id="chat-input" class="chat-input" placeholder="Ask anything about this contract..."
+              aria-label="Type your question" autocomplete="off" />
+            <button class="chat-send" id="chat-send" aria-label="Send message">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"
+                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="22" y1="2" x2="11" y2="13" />
+                <polygon points="22 2 15 22 11 13 2 9 22 2" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="module-panel" id="panel-prep" role="tabpanel">
+        <div class="module-header">
+          <div class="module-icon-wrap mi-gold"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+              stroke="var(--gold)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"
+              aria-hidden="true">
+              <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+              <rect x="8" y="2" width="8" height="4" rx="1" />
+              <path d="M9 14l2 2 4-4" />
+            </svg></div>
+          <div>
+            <div class="module-title">Lawyer Consultation Prep Kit</div>
+            <div class="module-desc">Auto-generated briefing with red flags, questions, and executive summary for your
+              attorney</div>
+          </div>
+        </div>
+        <div id="prep-content"></div>
+      </div>
+    </section>
+
+    <!-- ─── Footer ──────────────────────────────── -->
+    <footer style="border-top:1px solid var(--glass-border);padding:1.5rem clamp(1rem,5vw,3rem);text-align:center"
+      role="contentinfo">
+      <div
+        style="max-width:1400px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.75rem">
+        <a href="index.html"
+          style="font-family:var(--font-heading);font-weight:700;color:var(--text-secondary);text-decoration:none">Judge<span
+            style="color:var(--gold)">man</span></a>
+        <div style="font-size:0.78rem;color:var(--text-muted)">Built for <strong style="color:var(--violet)">AI for
+            Legal Assistance &amp; Access</strong> Challenge — Not legal advice.</div>
+        <div style="font-size:0.78rem;color:var(--text-muted)">Powered by Google Gemini</div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Gemini & Firestore Cloud Engine Modal -->
+  <div class="modal-overlay" id="api-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal glass-lg">
+      <div
+        style="width:44px;height:44px;border-radius:12px;background:rgba(52,211,153,0.15);border:1px solid rgba(52,211,153,0.3);display:flex;align-items:center;justify-content:center;margin-bottom:1rem"
+        aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="1.75"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+          <polyline points="22 4 12 14.01 9 11.01" />
+        </svg>
+      </div>
+      <div class="modal-title" id="modal-title">Judgeman Cloud AI &amp; Database</div>
+      <div class="modal-sub" style="margin-bottom:1rem;line-height:1.6">
+        <strong style="color:#34d399">Cloud Engine Ready:</strong> Built-in developer Gemini 1.5 and Firestore are actively powering your uploads, real-time summaries, and risk analyses. You do <strong style="color:var(--text-primary)">not</strong> need to enter a personal key.
+      </div>
+      <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:0.5rem">
+        Optional Custom Key (Leave blank to use built-in engine):
+      </div>
+      <label class="modal-label" for="api-key-input">Custom Gemini API Key</label>
+      <input type="password" id="api-key-input" class="modal-input" placeholder="AIza... (Optional override)" autocomplete="off" />
+      <div class="modal-actions">
+        <button class="btn-sm outline" id="modal-cancel">Close</button>
+        <button class="btn-sm solid" id="modal-save">Save Override</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="./js/app.js"></script>
+  <script type="module">
+    // Auth guard + User session display
+    import { getSession, clearSession, requireAuth } from './js/auth.js';
+    requireAuth('auth.html?mode=login');
+    const session = getSession();
+    if (session) {
+      const avatar = document.getElementById('user-avatar');
+      avatar.textContent = session.avatar;
+      document.getElementById('user-name-display').textContent = session.name;
+      document.getElementById('user-email-display').textContent = session.email;
+
+      // Dropdown toggle
+      avatar.addEventListener('click', () => {
+        const dd = document.getElementById('user-dropdown');
+        const open = dd.style.display === 'block';
+        dd.style.display = open ? 'none' : 'block';
+        avatar.setAttribute('aria-expanded', !open);
+      });
+      document.addEventListener('click', (e) => {
+        if (!document.getElementById('user-menu').contains(e.target)) {
+          document.getElementById('user-dropdown').style.display = 'none';
+        }
+      });
+
+      // Logout
+      document.getElementById('logout-btn').addEventListener('click', () => {
+        clearSession();
+        window.location.href = 'index.html';
+      });
+    }
+
+    // Initialize TextType typing animation
+    import TextType from './js/TextType.js';
+    new TextType('#typed-contract-target', {
+      text: [
+        "Legal Documents",
+        "Rental Leases",
+        "Employment Contracts",
+        "Freelance MSAs",
+        "Vendor NDAs",
+        "Terms of Service"
+      ],
+      typingSpeed: 60,
+      pauseDuration: 1800,
+      deletingSpeed: 30,
+      loop: true,
+      showCursor: true,
+      cursorCharacter: '|',
+      textColors: ['#E5B54F', '#818CF8', '#38BDF8', '#34D399', '#FBBF24']
+    });
+
+    // Initialize GlareHover specular reflection
+    import initGlareHover from './js/GlareHover.js';
+    initGlareHover('.stat-card', {
+      glareColor: '#ffffff',
+      glareOpacity: 0.18,
+      glareAngle: -45,
+      glareSize: 250,
+      transitionDuration: 650
+    });
+    initGlareHover('.dropzone', {
+      glareColor: '#818cf8',
+      glareOpacity: 0.15,
+      glareAngle: -45,
+      glareSize: 220,
+      transitionDuration: 750
+    });
+
+    // Initialize ClickSpark global particle burst
+    import ClickSpark from './js/ClickSpark.js';
+    new ClickSpark(document.body, {
+      sparkColor: '#818cf8',
+      sparkSize: 12,
+      sparkRadius: 22,
+      sparkCount: 8,
+      duration: 420,
+      easing: 'ease-out'
+    });
+
+    // Initialize StarBorder glowing animated border
+    import initStarBorder from './js/StarBorder.js';
+    initStarBorder('#app-start-cta', {
+      color: '#ffffff',
+      speed: '4s',
+      thickness: 2,
+      backgroundColor: 'linear-gradient(135deg, #E5B54F, #c98a1a)',
+      textColor: '#0d0d0d',
+      borderColor: 'transparent'
+    });
+
+    // Initialize BorderGlow reactive directional edge glow
+    import BorderGlow from './js/BorderGlow.js';
+    new BorderGlow('#ai-border-glow-card', {
+      edgeSensitivity: 30,
+      glowColor: '45 90 75',
+      backgroundColor: 'rgba(17, 24, 39, 0.75)',
+      borderRadius: 20,
+      glowRadius: 36,
+      glowIntensity: 1.15,
+      coneSpread: 26,
+      animated: true,
+      colors: ['#E5B54F', '#818CF8', '#38BDF8'],
+      fillOpacity: 0.45
+    });
+
+    // Initialize MoltenMetal animated background wallpaper
+    import MoltenMetal from './js/MoltenMetal.js';
+    new MoltenMetal('#molten-bg', {
+      color1: '#1b1432',
+      color2: '#E5B54F',
+      color3: '#FFF3CF',
+      speed: 0.22,
+      scale: 3.5,
+      detail: 3,
+      glow: 1.5,
+      coreSize: 0.08,
+      swirl: 0.85,
+      fold: -0.18,
+      blackPoint: 0.06,
+      brightness: 1.15,
+      colorMode: 'molten',
+      grain: true,
+      grainIntensity: 0.04,
+      mouseInteraction: true,
+      mouseStrength: 0.25,
+      opacity: 0.55
+    });
+  </script>
+</body>
+
+</html>

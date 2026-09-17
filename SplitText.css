@@ -1,0 +1,36 @@
+/* SplitText.css — Styles for the SplitText component */
+
+.split-parent {
+  display: inline-block;
+  position: relative;
+  overflow: hidden;
+  vertical-align: top;
+  will-change: transform, opacity;
+}
+
+h1.split-parent,
+h2.split-parent,
+h3.split-parent,
+h4.split-parent,
+.ln-section-title.split-parent {
+  display: block;
+  width: 100%;
+}
+
+.split-line {
+  display: block;
+  position: relative;
+  overflow: hidden;
+}
+
+.split-word {
+  display: inline-block;
+  position: relative;
+  white-space: nowrap;
+}
+
+.split-char {
+  display: inline-block;
+  position: relative;
+  will-change: transform, opacity;
+}

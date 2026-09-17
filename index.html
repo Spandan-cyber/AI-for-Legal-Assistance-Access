@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Judgeman — AI Legal Assistance & Access</title>
+  <meta name="description" content="Judgeman uses GenAI to decode complex legal documents, compare contracts, flag risks, and prepare you for a lawyer consultation — instantly." />
+  <meta property="og:title" content="Judgeman — AI Legal Assistance & Access" />
+  <meta property="og:description" content="Decode legal jargon. Spot hidden risks. Chat with your contract. Free legal AI powered by Google Gemini." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./style.css" />
+  <link rel="stylesheet" href="./style-extra.css" />
+  <link rel="stylesheet" href="./WarpText.css" />
+  <link rel="stylesheet" href="./SplitText.css" />
+  <link rel="stylesheet" href="./TextType.css" />
+  <link rel="stylesheet" href="./PixelSwap.css" />
+  <link rel="stylesheet" href="./GlareHover.css" />
+  <link rel="stylesheet" href="./ClickSpark.css" />
+  <link rel="stylesheet" href="./StarBorder.css" />
+  <link rel="stylesheet" href="./CurvedInput.css" />
+  <link rel="stylesheet" href="./CardNav.css" />
+  <link rel="stylesheet" href="./MoltenMetal.css" />
+</head>
+<body>
+
+<!-- MoltenMetal WebGL Background Wallpaper -->
+<div id="molten-bg" class="molten-metal-bg" aria-hidden="true"></div>
+
+<!-- Background Orbs -->
+<div class="bg-canvas" aria-hidden="true">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     CARD NAVIGATION (React Bits <CardNav />)
+══════════════════════════════════════════════════════════ -->
+<div id="card-nav-container"></div>
+
+<!-- ══════════════════════════════════════════════════════════
+     HERO
+══════════════════════════════════════════════════════════ -->
+<section class="ln-hero" aria-label="Hero">
+  <div class="ln-hero-badge" data-reveal>
+    <span class="dot" aria-hidden="true"></span>
+    <span id="hero-badge-type">AI for Legal Assistance &amp; Access Challenge</span>
+  </div>
+
+  <div class="hero-warp-container" data-reveal data-delay="1">
+    <h1 class="sr-only">Legal Documents, Finally Decoded.</h1>
+    <div id="hero-warp" class="hero-warp-stage" aria-label="Legal Documents, Finally Decoded."></div>
+    <div class="warp-presets" aria-label="WarpText headline presets">
+      <button type="button" class="warp-pill active" data-warp="Legal Documents,&#10;Finally Decoded.">Legal Documents</button>
+      <button type="button" class="warp-pill" data-warp="Bend the moment">Bend the moment</button>
+      <button type="button" class="warp-pill" data-warp="Judgeman AI&#10;Access &amp; Clarity">AI Clarity</button>
+      <button type="button" class="warp-pill" data-warp="No More Legal&#10;Jargon Traps">No Hidden Traps</button>
+    </div>
+  </div>
+
+  <p class="ln-hero-subtitle" data-reveal data-delay="2">
+    Judgeman uses Google Gemini AI to translate complex legal jargon into plain English, flag hidden risks, and prepare you for an attorney consultation — in seconds, not hours.
+  </p>
+
+  <div class="ln-hero-cta" data-reveal data-delay="3">
+    <a href="auth.html?mode=signup" class="ln-btn-cta-primary" id="hero-cta-btn">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      Start for Free
+    </a>
+    <a href="#features" class="ln-btn-cta-secondary">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+      See How It Works
+    </a>
+  </div>
+
+  <!-- Floating Product Mockup -->
+  <div class="hero-mockup" data-reveal data-delay="4" aria-hidden="true">
+    <div class="mockup-card">
+      <!-- Traffic lights -->
+      <div class="mockup-bar">
+        <div class="mockup-dot" style="background:#F87171"></div>
+        <div class="mockup-dot" style="background:#FBB040"></div>
+        <div class="mockup-dot" style="background:#34D399"></div>
+        <div style="flex:1;height:1px;background:rgba(255,255,255,0.06);margin-left:0.5rem"></div>
+        <div style="font-family:var(--font-mono);font-size:0.65rem;color:var(--text-muted)">Residential Lease Agreement.txt</div>
+      </div>
+      <!-- Tabs -->
+      <div class="mockup-tab-row">
+        <div class="mockup-tab active">Plain Language</div>
+        <div class="mockup-tab inactive">Risk Radar</div>
+        <div class="mockup-tab inactive">Ask Judgeman</div>
+        <div class="mockup-tab inactive">Prep Kit</div>
+      </div>
+      <!-- Interactive PixelSwap Clause Decoder -->
+      <div id="hero-pixelswap-stage" style="min-height:165px;position:relative;border-radius:12px;overflow:hidden;margin-bottom:0.75rem;"></div>
+      <!-- Risk rows -->
+      <div style="margin-top:0.75rem">
+        <div class="mockup-risk-row">
+          <span style="width:8px;height:8px;border-radius:50%;background:var(--red);flex-shrink:0"></span>
+          <span>Uncapped Indemnification Clause</span>
+          <span style="margin-left:auto;font-family:var(--font-mono);font-size:0.65rem;color:var(--red)">HIGH</span>
+        </div>
+        <div class="mockup-risk-row">
+          <span style="width:8px;height:8px;border-radius:50%;background:var(--amber);flex-shrink:0"></span>
+          <span>Unilateral Rent Increase Right</span>
+          <span style="margin-left:auto;font-family:var(--font-mono);font-size:0.65rem;color:var(--amber)">MED</span>
+        </div>
+        <div class="mockup-risk-row">
+          <span style="width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0"></span>
+          <span>24-Hour Entry Notice Provided</span>
+          <span style="margin-left:auto;font-family:var(--font-mono);font-size:0.65rem;color:var(--green)">LOW</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     SOCIAL PROOF / STATS
+══════════════════════════════════════════════════════════ -->
+<div class="ln-stats" aria-label="Platform statistics">
+  <div class="ln-stats-inner">
+    <div data-reveal>
+      <div class="ln-stat-num" style="color:var(--gold)" data-counter="12400" data-suffix="+">0+</div>
+      <div class="ln-stat-label">Documents Analyzed</div>
+    </div>
+    <div data-reveal data-delay="1">
+      <div class="ln-stat-num" style="color:var(--red)" data-counter="38700" data-suffix="+">0+</div>
+      <div class="ln-stat-label">Risk Clauses Flagged</div>
+    </div>
+    <div data-reveal data-delay="2">
+      <div class="ln-stat-num" style="color:var(--green)" data-counter="5200" data-suffix="+">0+</div>
+      <div class="ln-stat-label">Prep Kits Generated</div>
+    </div>
+    <div data-reveal data-delay="3">
+      <div class="ln-stat-num" style="color:var(--cyan)" data-counter="34" data-suffix=" Countries">0</div>
+      <div class="ln-stat-label">Used Globally</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     FEATURES BENTO GRID
+══════════════════════════════════════════════════════════ -->
+<section id="features" aria-label="Features">
+  <div class="ln-section">
+    <div class="ln-section-header" data-reveal>
+      <div class="ln-section-tag">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        Platform Features
+      </div>
+      <h2 class="ln-section-title" data-split-text>Everything you need to<br><span style="color:var(--gold)">understand your rights.</span></h2>
+      <p class="ln-section-sub">Six powerful AI-driven tools that work together to give you full clarity over any legal document.</p>
+    </div>
+
+    <div class="features-grid">
+      <!-- Feature 1 — Wide -->
+      <div class="feature-card wide" data-reveal>
+        <div class="fc-icon mi-green" style="border-radius:var(--radius-md)">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"/><line x1="16" y1="8" x2="2" y2="22"/><line x1="17.5" y1="15" x2="9" y2="15"/></svg>
+        </div>
+        <div class="fc-title">Plain-Language Simplifier</div>
+        <div class="fc-desc">Every dense, jargon-heavy clause translated side-by-side into plain English you can actually understand. No legal degree required. Includes "Watch Out" trap callouts for hidden gotchas.</div>
+      </div>
+
+      <!-- Feature 2 -->
+      <div class="feature-card" data-reveal data-delay="1">
+        <div class="fc-icon mi-violet" style="border-radius:var(--radius-md)">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--violet)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="8" height="18" rx="2"/><rect x="14" y="3" width="8" height="18" rx="2"/><path d="M9 12h6M12 9l3 3-3 3"/></svg>
+        </div>
+        <div class="fc-title">Contract Comparison Diff</div>
+        <div class="fc-desc">Upload two versions of a contract and instantly see what changed — salary cuts, expanded non-competes, removed severance — highlighted clause by clause.</div>
+      </div>
+
+      <!-- Feature 3 -->
+      <div class="feature-card" data-reveal data-delay="2">
+        <div class="fc-icon mi-red" style="border-radius:var(--radius-md)">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+        </div>
+        <div class="fc-title">Risk & Clause Radar</div>
+        <div class="fc-desc">Every clause automatically rated High / Medium / Low risk and categorized by type: Payment, IP Ownership, Termination, Non-Compete, Liability, and more.</div>
+      </div>
+
+      <!-- Feature 4 -->
+      <div class="feature-card" data-reveal data-delay="1">
+        <div class="fc-icon mi-gold" style="border-radius:var(--radius-md)">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 10h.01M12 10h.01M16 10h.01"/></svg>
+        </div>
+        <div class="fc-title">Interactive Document Q&A</div>
+        <div class="fc-desc">Chat directly with your document. Ask "Who owns my side projects?" or "Can I be fired without cause?" and get contextual answers with exact clause citations.</div>
+      </div>
+
+      <!-- Feature 5 — Wide -->
+      <div class="feature-card wide" data-reveal data-delay="2">
+        <div class="fc-icon mi-cyan" style="border-radius:var(--radius-md)">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M9 14l2 2 4-4"/></svg>
+        </div>
+        <div class="fc-title">Lawyer Consultation Prep Kit</div>
+        <div class="fc-desc">Auto-generates a complete attorney briefing document with: an executive summary, top 5 red flags to negotiate, and a prioritized list of questions to ask in your 30-minute consultation. Exportable as Markdown instantly.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     HOW IT WORKS
+══════════════════════════════════════════════════════════ -->
+<section id="how-it-works" style="background:rgba(255,255,255,0.015);border-top:1px solid var(--glass-border);border-bottom:1px solid var(--glass-border);padding:5rem 0" aria-label="How Judgeman works">
+  <div style="max-width:1300px;margin:0 auto;padding:0 clamp(1rem,5vw,4rem)">
+    <div class="ln-section-header" style="text-align:center" data-reveal>
+      <div class="ln-section-tag" style="margin:0 auto 1rem">How It Works</div>
+      <h2 class="ln-section-title">Legal clarity in <span style="color:var(--gold)">3 simple steps</span></h2>
+    </div>
+
+    <div class="hiw-grid">
+      <div class="hiw-step" data-reveal>
+        <div class="hiw-num" style="background:rgba(229,181,79,0.12);border:1px solid rgba(229,181,79,0.25);color:var(--gold)">1</div>
+        <div style="margin-bottom:1rem" aria-hidden="true">
+          <svg width="40" height="40" viewBox="0 0 32 32" fill="none" stroke="rgba(229,181,79,0.6)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M28 20v4a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4v-4"/><polyline points="22 10 16 4 10 10"/><line x1="16" y1="4" x2="16" y2="20"/></svg>
+        </div>
+        <h3 class="hiw-title">Upload Your Document</h3>
+        <p class="hiw-desc">Drag and drop any legal document — a lease, employment offer, NDA, or terms of service — or choose from our curated sample contracts.</p>
+      </div>
+      <div class="hiw-step" data-reveal data-delay="2">
+        <div class="hiw-num" style="background:rgba(129,140,248,0.12);border:1px solid rgba(129,140,248,0.25);color:var(--violet)">2</div>
+        <div style="margin-bottom:1rem" aria-hidden="true">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(129,140,248,0.6)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        </div>
+        <h3 class="hiw-title">AI Analyzes Instantly</h3>
+        <p class="hiw-desc">Google Gemini AI reads every clause, identifies obligations and hidden risks, and generates plain-English explanations across 6 analysis modules.</p>
+      </div>
+      <div class="hiw-step" data-reveal data-delay="4">
+        <div class="hiw-num" style="background:rgba(52,211,153,0.12);border:1px solid rgba(52,211,153,0.25);color:var(--green)">3</div>
+        <div style="margin-bottom:1rem" aria-hidden="true">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(52,211,153,0.6)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M9 14l2 2 4-4"/></svg>
+        </div>
+        <h3 class="hiw-title">Act with Confidence</h3>
+        <p class="hiw-desc">Export your Lawyer Prep Kit, ask follow-up questions, and walk into any legal consultation fully briefed — negotiating from a position of knowledge.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     USE CASES
+══════════════════════════════════════════════════════════ -->
+<section id="use-cases" aria-label="Who uses Judgeman">
+  <div class="ln-section">
+    <div class="ln-section-header" style="text-align:center" data-reveal>
+      <div class="ln-section-tag" style="margin:0 auto 1rem">Who It's For</div>
+      <h2 class="ln-section-title" data-split-text>Legal AI for <span style="color:var(--cyan)">everyone.</span></h2>
+      <p class="ln-section-sub" style="margin:0 auto">Whether you're signing a lease or reviewing a client contract, Judgeman puts legal expertise in your pocket.</p>
+    </div>
+    <div class="usecases-grid">
+      <div class="usecase-card" data-reveal>
+        <span class="uc-emoji">🏠</span>
+        <div class="uc-title">Renters &amp; Tenants</div>
+        <div class="uc-desc">Decode security deposit traps, illegal landlord entry clauses, and unfair rent-increase provisions before you sign.</div>
+      </div>
+      <div class="usecase-card" data-reveal data-delay="1">
+        <span class="uc-emoji">💻</span>
+        <div class="uc-title">Freelancers &amp; Creators</div>
+        <div class="uc-desc">Understand who owns your work, spot overbroad IP assignments, and negotiate non-compete clauses before they limit your career.</div>
+      </div>
+      <div class="usecase-card" data-reveal data-delay="2">
+        <span class="uc-emoji">🚀</span>
+        <div class="uc-title">Startups &amp; Founders</div>
+        <div class="uc-desc">Review investor terms, SaaS agreements, and vendor contracts without spending thousands on legal fees for preliminary review.</div>
+      </div>
+      <div class="usecase-card" data-reveal data-delay="3">
+        <span class="uc-emoji">👔</span>
+        <div class="uc-title">Job Seekers</div>
+        <div class="uc-desc">Compare offer letters, identify missing severance clauses, and negotiate non-solicitation terms before accepting any employment offer.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     TESTIMONIALS
+══════════════════════════════════════════════════════════ -->
+<section id="testimonials" style="background:rgba(255,255,255,0.015);border-top:1px solid var(--glass-border);border-bottom:1px solid var(--glass-border);padding:5rem 0" aria-label="User testimonials">
+  <div style="max-width:1300px;margin:0 auto;padding:0 clamp(1rem,5vw,4rem)">
+    <div class="ln-section-header" style="text-align:center;margin-bottom:3rem" data-reveal>
+      <div class="ln-section-tag" style="margin:0 auto 1rem">Testimonials</div>
+      <h2 class="ln-section-title">Trusted by <span style="color:var(--gold)">real people</span></h2>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testimonial-card" data-reveal>
+        <div class="tc-stars">★★★★★</div>
+        <div class="tc-quote">"Judgeman spotted an uncapped indemnification clause in my lease that my landlord downplayed as 'standard'. My attorney confirmed it was not. Saved me potentially thousands."</div>
+        <div class="tc-author">
+          <div class="tc-avatar" style="background:linear-gradient(135deg,#4f46e5,#818cf8)">PR</div>
+          <div><div class="tc-name">Priya R.</div><div class="tc-role">Software Engineer, San Jose</div></div>
+        </div>
+      </div>
+      <div class="testimonial-card" data-reveal data-delay="1">
+        <div class="tc-stars">★★★★★</div>
+        <div class="tc-quote">"The Contract Comparison diff showed me exactly how the revised offer was worse — lower salary, longer non-compete, and no severance. I negotiated every single point back."</div>
+        <div class="tc-author">
+          <div class="tc-avatar" style="background:linear-gradient(135deg,#0e7490,#38bdf8)">MK</div>
+          <div><div class="tc-name">Marcus K.</div><div class="tc-role">Product Manager, Austin</div></div>
+        </div>
+      </div>
+      <div class="testimonial-card" data-reveal data-delay="2">
+        <div class="tc-stars">★★★★★</div>
+        <div class="tc-quote">"As a freelance designer, I never understood IP assignment clauses. Judgeman's plain-English breakdown made it crystal clear — and the Prep Kit meant I asked exactly the right questions."</div>
+        <div class="tc-author">
+          <div class="tc-avatar" style="background:linear-gradient(135deg,#7c3aed,#a78bfa)">SL</div>
+          <div><div class="tc-name">Sofia L.</div><div class="tc-role">Freelance Designer, NYC</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     CTA BANNER
+══════════════════════════════════════════════════════════ -->
+<div class="ln-cta-banner" data-reveal aria-label="Call to action">
+  <div class="ln-cta-title">Start understanding your contracts <span style="color:var(--gold)">today.</span></div>
+  <div class="ln-cta-sub">Free to use. No credit card required. Powered by Google Gemini.</div>
+  <div id="curved-cta-input" style="max-width: 520px; width: 100%; margin: 1.5rem auto 0 auto;"></div>
+  <div style="font-size:0.75rem;color:var(--text-muted);margin-top:1rem">
+    By signing up, you agree to our Terms of Service. Not legal advice — always consult a licensed attorney.
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     FOOTER
+══════════════════════════════════════════════════════════ -->
+<footer class="ln-footer" role="contentinfo">
+  <div class="ln-footer-inner">
+    <div>
+      <a href="index.html" class="nav-brand" style="margin-bottom:0.75rem;display:inline-flex" aria-label="Judgeman Home">
+        <span style="font-family:var(--font-heading);font-size:1.2rem;font-weight:800;color:var(--text-primary)">Judge<span style="color:var(--gold)">man</span></span>
+      </a>
+      <p class="footer-brand-desc">GenAI-powered legal document analysis. Helping individuals, freelancers, and small businesses understand their legal rights — without the jargon.</p>
+      <div style="margin-top:1rem;font-size:0.7rem;color:var(--text-muted)">Powered by Google Gemini</div>
+    </div>
+    <div>
+      <div class="footer-col-title">Product</div>
+      <ul class="footer-links">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#how-it-works">How It Works</a></li>
+        <li><a href="#use-cases">Use Cases</a></li>
+        <li><a href="app.html">Launch App</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Account</div>
+      <ul class="footer-links">
+        <li><a href="auth.html?mode=signup">Sign Up Free</a></li>
+        <li><a href="auth.html?mode=login">Log In</a></li>
+        <li><a href="app.html">Dashboard</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Legal</div>
+      <ul class="footer-links">
+        <li><a href="#">Terms of Service</a></li>
+        <li><a href="#">Privacy Policy</a></li>
+        <li><a href="#">Not Legal Advice</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div>© 2025 Judgeman. All rights reserved.</div>
+    <div style="text-align:center;max-width:600px">
+      <strong>Disclaimer:</strong> Judgeman provides legal literacy and document analysis tools, not formal legal advice. Always consult a licensed attorney for your specific situation.
+    </div>
+    <div>Built for AI for Legal Access Challenge</div>
+  </div>
+</footer>
+
+<script type="module" src="./js/landing.js"></script>
+</body>
+</html>

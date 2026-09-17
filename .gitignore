@@ -1,0 +1,19 @@
+# Dependencies (Must be ignored to keep repo size < 10 MB)
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# Environment & Sensitive Keys
+.env
+.env*.local
+
+# Editor & System Files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.log
+
+# Temp & Backup Files
+_old_app.html
