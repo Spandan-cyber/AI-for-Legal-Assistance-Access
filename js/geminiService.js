@@ -1,6 +1,5 @@
-// js/geminiService.js — Developer-backed Gemini API Integration & Real-Time Contract Analysis
-
-const DEVELOPER_API_KEY = import.meta.env.VITE_GEMINI_API_KEY || '';
+const env = (typeof import.meta !== 'undefined' && import.meta.env) ? import.meta.env : (typeof process !== 'undefined' && process.env ? process.env : {});
+const DEVELOPER_API_KEY = env.VITE_GEMINI_API_KEY || '';
 let _overrideKey = null;
 
 export function setApiKey(key) { _overrideKey = key; }
@@ -61,7 +60,7 @@ JSON format required:
 `;
 
       const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -79,8 +78,10 @@ JSON format required:
       const data = await response.json();
       const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text;
       if (rawText) {
-        const cleaned = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
-        const parsed = JSON.parse(cleaned);
+        let jsonStr = rawText.trim();
+        const jsonMatch = jsonStr.match(/\{[\s\S]*\}/);
+        if (jsonMatch) jsonStr = jsonMatch[0];
+        const parsed = JSON.parse(jsonStr);
 
         return {
           name: documentName,
@@ -206,7 +207,7 @@ function generateHeuristicAnalysis(text, documentName, wordCount, readingTime) {
     wordCount,
     readingTime,
     gradeLevel: 'College Level',
-    fullText,
+    fullText: text,
     clauses,
     risks,
     prepKit: {
@@ -231,7 +232,8 @@ export async function askJudgeman(question, contractData) {
   if (isLiveMode() && contractData?.fullText) {
     try {
       const prompt = `
-You are Judgeman AI, an expert legal assistant. Answer the user's question directly based on this contract.
+You are Judgeman, an elite legal assistant. Answer the user's question directly based on the contract provided below.
+
 Document Name: "${contractData.name}"
 Contract Text:
 """
@@ -245,7 +247,7 @@ Always end with a 1-sentence reminder that you provide legal analysis and educat
 `;
 
       const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
