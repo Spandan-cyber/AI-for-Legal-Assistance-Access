@@ -1,16 +1,35 @@
-// js/app.js — Main Application Controller for Judgeman
+/**
+ * js/app.js — Main Application Controller for Judgeman
+ * Orchestrates document upload, real-time AI analysis (Gemini 2.5 Flash),
+ * Firestore persistence, and all six analysis modules.
+ */
 
 import { Icons } from './icons.js';
 import { SAMPLES, SAMPLE_COMPARISON } from './sampleData.js';
-import { setApiKey, getApiKey, analyzeContractWithGemini, askJudgeman } from './geminiService.js';
+import { setApiKey, analyzeContractWithGemini, askJudgeman } from './geminiService.js';
 import { getSession } from './auth.js';
 import { saveDocumentToFirestore, subscribeToUserDocuments, deleteDocumentFromFirestore } from './documentService.js';
 
+/** @type {object|null} The currently loaded contract analysis result */
 let currentContract = null;
+/** @type {string|null} The key of the active sample chip, or null if custom */
 let currentKey = 'lease';
+/** @type {Array} Running history of chat Q&A pairs */
 let chatHistory = [];
+/** @type {Array} User's cloud documents from Firestore real-time listener */
 let userDocuments = [];
+/** @type {Function|null} Cleanup function for the Firestore onSnapshot listener */
 let unsubscribeUserDocs = null;
+
+/** Supported plaintext MIME types and extensions for contract upload */
+const SUPPORTED_TEXT_TYPES = new Set([
+  'text/plain', 'text/html', 'text/xml', 'application/xml',
+  'application/json', 'text/markdown', 'text/csv'
+]);
+const SUPPORTED_EXTENSIONS = new Set(['.txt', '.text', '.md', '.csv', '.xml', '.json', '.html']);
+
+/** Maximum file size allowed for upload: 5 MB */
+const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024;
 
 /* ═══════════════════════════════════════════════════════════
    BOOT
@@ -81,30 +100,50 @@ function bindDropzone() {
 }
 
 async function handleFile(file) {
+  // ── File Validation ──────────────────────────────────────
+  if (file.size > MAX_FILE_SIZE_BYTES) {
+    showToast(`File too large (max 5 MB). "${file.name}" is ${(file.size / 1024 / 1024).toFixed(1)} MB.`);
+    return;
+  }
+
+  const ext = '.' + file.name.split('.').pop().toLowerCase();
+  const isTextType = SUPPORTED_TEXT_TYPES.has(file.type) || SUPPORTED_EXTENSIONS.has(ext);
+  if (!isTextType) {
+    // Attempt to read anyway (e.g. .txt without MIME) — just warn user
+    console.warn('[Judgeman] Unknown file type, attempting text read:', file.type, ext);
+  }
+
   const dz = document.getElementById('dropzone');
   const origDzHtml = dz.innerHTML;
   dz.innerHTML = `
-    <div style="padding:1.5rem;text-align:center;">
-      <div style="width:34px;height:34px;border:3px solid rgba(229,181,79,0.25);border-top-color:var(--gold);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 1rem;"></div>
+    <div style="padding:1.5rem;text-align:center;" role="status" aria-live="polite" aria-label="Analyzing ${escHtml(file.name)}">
+      <div style="width:34px;height:34px;border:3px solid rgba(229,181,79,0.25);border-top-color:var(--gold);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 1rem;" aria-hidden="true"></div>
       <div style="font-family:var(--font-heading);font-weight:700;font-size:1rem;color:var(--text-primary);margin-bottom:0.3rem;">
         Analyzing "${escHtml(file.name)}" with Gemini AI...
       </div>
       <div style="font-size:0.78rem;color:var(--text-secondary);max-width:400px;margin:0 auto;line-height:1.5;">
-        Extracting clause plain-English breakdown, calculating risk radar, and generating executive summary in real time.
+        Extracting clause breakdown, calculating risk radar, and generating real-time executive summary.
       </div>
     </div>
   `;
 
-  showToast(`Analyzing "${file.name}" with Gemini AI...`);
+  announceToScreenReader(`Analyzing ${file.name} with Gemini AI. Please wait.`);
 
   const reader = new FileReader();
   reader.onload = async () => {
     try {
       const text = reader.result;
-      // Real-time AI analysis (uses developer key automatically)
+      if (!text || text.trim().length < 10) {
+        showToast('File appears to be empty or unreadable. Please upload a text-based contract.');
+        dz.innerHTML = origDzHtml;
+        injectIcons();
+        return;
+      }
+
+      // Real-time AI analysis (uses developer Gemini key automatically)
       const analysis = await analyzeContractWithGemini(text, file.name);
 
-      // Save to Cloud Firestore
+      // Persist to Cloud Firestore under the authenticated user's scope
       const session = getSession();
       const userId = session?.uid || 'guest';
       const savedDoc = await saveDocumentToFirestore(userId, analysis);
@@ -115,19 +154,26 @@ async function handleFile(file) {
 
       updateAllModules(currentContract);
       renderInitialChat();
-      showToast(`✓ "${file.name}" analyzed and saved to Cloud Firestore!`);
+      showToast(`"${file.name}" analyzed and saved to your cloud library!`);
+      announceToScreenReader(`Analysis complete. ${file.name} has been saved to your library.`);
 
-      // Smooth scroll to workspace
+      // Smooth scroll to results workspace
       setTimeout(() => {
         document.getElementById('workspace')?.scrollIntoView({ behavior: 'smooth' });
       }, 350);
     } catch (err) {
       console.error('[Judgeman] Analysis error:', err);
-      showToast('Error analyzing document. Please try again.');
+      showToast('Analysis failed. Please check your file is a readable text contract and try again.');
+      announceToScreenReader('Analysis failed. Please try again.');
     } finally {
       dz.innerHTML = origDzHtml;
       injectIcons();
     }
+  };
+  reader.onerror = () => {
+    showToast('Could not read file. Ensure it is a text-based document (.txt, .md, etc.)');
+    dz.innerHTML = origDzHtml;
+    injectIcons();
   };
   reader.readAsText(file);
 }
@@ -380,9 +426,10 @@ function renderSimplifier(c) {
   }
 
   el.innerHTML = c.clauses.map((clause, i) => `
-    <div style="margin-bottom:1.5rem">
+    <div style="margin-bottom:1.5rem" role="article" aria-label="Clause ${i + 1}: ${escHtml(clause.title || '')}">
       <div style="font-family:var(--font-mono);font-size:0.7rem;color:var(--text-muted);margin-bottom:0.75rem;text-transform:uppercase;letter-spacing:0.06em">
-        Clause ${i + 1} — ${clause.type === 'high' ? '🔴 High Risk' : clause.type === 'med' ? '🟡 Caution' : '🟢 Standard'}
+        Clause ${i + 1}
+        ${clause.title ? `— <span style="color:var(--text-secondary);text-transform:none;font-style:italic">${escHtml(clause.title)}</span>` : ''}
       </div>
       <div class="simplifier-grid">
         <div class="glass clause-card">
@@ -390,18 +437,19 @@ function renderSimplifier(c) {
             <span class="clause-label orig">Original Legal Text</span>
             <span class="tag high" style="font-size:0.65rem">Jargon</span>
           </div>
-          <div class="clause-text">"${escHtml(clause.original)}"</div>
+          <div class="clause-text">"${escHtml(clause.original || 'No original text available.')}"</div>
         </div>
         <div class="glass clause-card" style="border-color:rgba(52,211,153,0.15)">
           <div class="clause-card-header">
             <span class="clause-label plain">Plain English</span>
             <span class="tag low" style="font-size:0.65rem">Simplified</span>
           </div>
-          <div class="clause-text plain">${escHtml(clause.plain)}</div>
-          <div class="insight-chip">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:2px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <div class="clause-text plain">${escHtml(clause.simplified || clause.plain || 'Simplified version not available.')}</div>
+          ${clause.trap ? `
+          <div class="insight-chip" role="note" aria-label="Risk note for this clause">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:2px" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
             <span><strong>Watch out:</strong> ${escHtml(clause.trap)}</span>
-          </div>
+          </div>` : ''}
         </div>
       </div>
     </div>
@@ -663,29 +711,77 @@ function bindModal() {
 /* ═══════════════════════════════════════════════════════════
    UTILITIES
 ═══════════════════════════════════════════════════════════ */
+
+/**
+ * Escape HTML special characters to prevent XSS injection.
+ * All user/AI-generated text MUST pass through this before innerHTML insertion.
+ * @param {*} str - Value to escape
+ * @returns {string} HTML-safe string
+ */
 function escHtml(str) {
-  return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  return String(str ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
 }
 
+/**
+ * Convert a limited subset of Markdown to safe HTML for chat bubbles.
+ * Only bold (**), italic (*), and newlines are converted.
+ * @param {string} text
+ * @returns {string}
+ */
 function markdownToHtml(text) {
-  return text
+  return escHtml(text)
     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
     .replace(/\*(.*?)\*/g, '<em>$1</em>')
     .replace(/\n\n/g, '<br><br>')
     .replace(/\n/g, '<br>');
 }
 
-function showToast(msg) {
+/**
+ * Display a brief non-blocking toast notification.
+ * @param {string} msg - Message to display
+ * @param {'success'|'error'} [type='success']
+ */
+function showToast(msg, type = 'success') {
+  const isError = type === 'error';
   const t = document.createElement('div');
+  t.setAttribute('role', 'status');
+  t.setAttribute('aria-live', 'polite');
   t.style.cssText = `
     position:fixed;bottom:1.5rem;right:1.5rem;z-index:9999;
-    background:rgba(13,18,37,0.95);border:1px solid rgba(52,211,153,0.3);
-    color:var(--green);padding:0.75rem 1.25rem;border-radius:12px;
+    background:rgba(13,18,37,0.95);
+    border:1px solid ${isError ? 'rgba(239,68,68,0.3)' : 'rgba(52,211,153,0.3)'};
+    color:${isError ? 'var(--red)' : 'var(--green)'};
+    padding:0.75rem 1.25rem;border-radius:12px;
     font-size:0.82rem;font-weight:500;backdrop-filter:blur(12px);
-    box-shadow:0 0 20px rgba(52,211,153,0.15);
+    box-shadow:0 0 20px ${isError ? 'rgba(239,68,68,0.15)' : 'rgba(52,211,153,0.15)'};
     animation:fadeUp 0.3s ease;
+    max-width:340px;word-break:break-word;
   `;
-  t.textContent = '✓ ' + msg;
+  t.textContent = (isError ? '✗ ' : '✓ ') + msg;
   document.body.appendChild(t);
-  setTimeout(() => t.remove(), 3000);
+  setTimeout(() => t.remove(), 3500);
+}
+
+/**
+ * Announce a message to screen readers via an ARIA live region.
+ * @param {string} message
+ */
+function announceToScreenReader(message) {
+  let liveRegion = document.getElementById('sr-announcer');
+  if (!liveRegion) {
+    liveRegion = document.createElement('div');
+    liveRegion.id = 'sr-announcer';
+    liveRegion.setAttribute('aria-live', 'assertive');
+    liveRegion.setAttribute('aria-atomic', 'true');
+    liveRegion.style.cssText = 'position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;';
+    document.body.appendChild(liveRegion);
+  }
+  // Brief delay ensures screen reader picks up the new content
+  liveRegion.textContent = '';
+  setTimeout(() => { liveRegion.textContent = message; }, 50);
 }

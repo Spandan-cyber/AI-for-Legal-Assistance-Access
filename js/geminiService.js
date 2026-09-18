@@ -1,4 +1,13 @@
-const env = (typeof import.meta !== 'undefined' && import.meta.env) ? import.meta.env : (typeof process !== 'undefined' && process.env ? process.env : {});
+/**
+ * js/geminiService.js — Gemini 2.5 Flash AI analysis engine for Judgeman.
+ * Provides structured legal contract analysis and interactive Q&A.
+ * Uses the developer's API key from VITE_GEMINI_API_KEY — no user key required.
+ */
+
+const env = (typeof import.meta !== 'undefined' && import.meta.env)
+  ? import.meta.env
+  : (typeof process !== 'undefined' && process.env ? process.env : {});
+
 const DEVELOPER_API_KEY = env.VITE_GEMINI_API_KEY || '';
 let _overrideKey = null;
 
@@ -10,7 +19,12 @@ export function isLiveMode() {
 }
 
 /**
- * Perform real-time contract analysis and summary using Gemini 1.5 Flash
+ * Perform real-time contract analysis and summary using Gemini 2.5 Flash.
+ * Falls back to intelligent heuristic analysis if API key is absent or the
+ * call fails (rate limit, network error, etc.).
+ * @param {string} fullText - The full text of the legal contract
+ * @param {string} [documentName='Uploaded Contract'] - Display name
+ * @returns {Promise<object>} Structured analysis object
  */
 export async function analyzeContractWithGemini(fullText, documentName = 'Uploaded Contract') {
   const apiKey = getApiKey();
@@ -68,20 +82,40 @@ JSON format required:
             contents: [{ role: 'user', parts: [{ text: prompt }] }],
             generationConfig: {
               temperature: 0.2,
-              maxOutputTokens: 2048,
+              maxOutputTokens: 4096,
               responseMimeType: 'application/json'
             }
           })
         }
       );
 
+      if (!response.ok) {
+        const errBody = await response.json().catch(() => ({}));
+        const errCode = errBody?.error?.status || response.status;
+        if (response.status === 429 || errCode === 'RESOURCE_EXHAUSTED') {
+          console.warn('[Judgeman] Gemini quota/rate limit hit, using heuristic fallback.');
+        } else {
+          console.warn('[Judgeman] Gemini API error:', response.status, errBody?.error?.message);
+        }
+        return generateHeuristicAnalysis(fullText, documentName, wordCount, readingTime);
+      }
+
       const data = await response.json();
       const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text;
       if (rawText) {
         let jsonStr = rawText.trim();
+        // Strip markdown code fences if Gemini wraps the JSON
+        jsonStr = jsonStr.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '');
         const jsonMatch = jsonStr.match(/\{[\s\S]*\}/);
         if (jsonMatch) jsonStr = jsonMatch[0];
-        const parsed = JSON.parse(jsonStr);
+
+        let parsed;
+        try {
+          parsed = JSON.parse(jsonStr);
+        } catch (parseErr) {
+          console.warn('[Judgeman] JSON parse failed, using heuristic fallback:', parseErr.message);
+          return generateHeuristicAnalysis(fullText, documentName, wordCount, readingTime);
+        }
 
         return {
           name: documentName,
@@ -92,18 +126,18 @@ JSON format required:
           readingTime,
           gradeLevel: parsed.gradeLevel || 'College Level',
           fullText,
-          clauses: parsed.clauses || [],
-          risks: parsed.risks || [],
+          clauses: Array.isArray(parsed.clauses) ? parsed.clauses : [],
+          risks: Array.isArray(parsed.risks) ? parsed.risks : [],
           prepKit: {
-            summary: parsed.summary || parsed.prepKit?.summary || 'Executive summary generated.',
-            redFlags: parsed.prepKit?.redFlags || [],
-            questions: parsed.prepKit?.questions || []
+            summary: parsed.summary || parsed.prepKit?.summary || 'AI executive summary generated.',
+            redFlags: Array.isArray(parsed.prepKit?.redFlags) ? parsed.prepKit.redFlags : [],
+            questions: Array.isArray(parsed.prepKit?.questions) ? parsed.prepKit.questions : []
           },
           isAIGenerated: true
         };
       }
     } catch (err) {
-      console.warn('[Judgeman] Live Gemini analysis failed, generating structured heuristics:', err.message);
+      console.warn('[Judgeman] Live Gemini analysis failed, using heuristic fallback:', err.message);
     }
   }
 
